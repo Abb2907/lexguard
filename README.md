@@ -50,7 +50,7 @@ LexGuard streamlines legal intelligence by leveraging specialized LLM agents (po
    ```bash
    uvicorn main:app --reload
    ```
-
+q
 ### Frontend Setup
 
 1. Navigate to the root directory.

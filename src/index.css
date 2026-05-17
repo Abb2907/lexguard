@@ -1,20 +1,24 @@
 @import "tailwindcss";
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 :root {
-  --bg-base:        #0a0c0f;   /* near-black, cool undertone */
-  --bg-surface:     #111318;   /* panel backgrounds */
-  --bg-card:        #181c24;   /* clause cards */
+  --bg-base:        #080a0d;   /* near-black, deep cool */
+  --bg-surface:     #0e1117;   /* panel backgrounds */
+  --bg-card:        #141920;   /* clause cards */
   --accent-gold:    #c9a84c;   /* legal gold — primary accent */
+  --accent-gold-light: #e2c06e;
   --accent-danger:  #e05252;   /* DANGEROUS / high risk */
   --accent-warning: #e08c32;   /* RISKY / medium risk */
   --accent-caution: #c9a84c;   /* CAUTION / low-medium risk */
   --accent-safe:    #52a882;   /* SAFE / low risk */
-  --text-primary:   #e8eaf0;   /* main readable text */
-  --text-muted:     #8f96a3;   /* labels, metadata - slightly brightened for contrast */
-  --border:         #2a2f3a;   /* dividers, card borders */
-  --highlight:      rgba(201,168,76,0.08); /* gold glow on hover */
+  --text-primary:   #eceef4;   /* main readable text */
+  --text-muted:     #8f96a3;   /* labels, metadata */
+  --border:         #1e2330;   /* dividers */
+  --border-glow:    rgba(201,168,76,0.18);
+  --highlight:      rgba(201,168,76,0.07);
+  --glow-gold:      0 0 24px rgba(201, 168, 76, 0.18);
+  --glow-danger:    0 0 24px rgba(224, 82, 82, 0.18);
 }
 
 @theme {
@@ -29,82 +33,106 @@
   --color-text-primary: var(--text-primary);
   --color-text-muted: var(--text-muted);
   --color-border-custom: var(--border);
-  
+
   --font-display: "Playfair Display", Georgia, serif;
   --font-mono: "JetBrains Mono", monospace;
-  --font-body: "Source Serif 4", Georgia, serif;
+  --font-body: "Inter", system-ui, sans-serif;
 }
 
 html, body {
   background-color: var(--bg-base);
   color: var(--text-primary);
-  font-family: "Source Serif 4", Georgia, serif;
+  font-family: "Inter", system-ui, sans-serif;
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Custom scrollbar for Bloomberg Terminal war room aesthetic */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
+/* ─── Scrollbar ──────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg-base); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-gold); }
 
-::-webkit-scrollbar-track {
-  background: var(--bg-base);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-gold);
-}
-
-/* Base resets & typography details */
+/* ─── Typography ──────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
   font-family: "Playfair Display", Georgia, serif;
   letter-spacing: -0.02em;
 }
+code, pre { font-family: "JetBrains Mono", monospace; }
 
-code, pre {
-  font-family: "JetBrains Mono", monospace;
-}
-
-/* Interactive elements default transitions */
+/* ─── Transitions ────────────────────────────── */
 a, button, input, select, textarea {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Micro-animations */
+/* ─── Grid background texture ────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(201,168,76,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(201,168,76,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Glassmorphism ──────────────────────────── */
+.glass {
+  background: rgba(14, 17, 23, 0.72);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  border: 1px solid rgba(201,168,76,0.12);
+}
+
+/* ─── Gradient text ──────────────────────────── */
+.text-gradient-gold {
+  background: linear-gradient(135deg, var(--accent-gold) 0%, var(--accent-gold-light) 60%, #f5dfa0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Glow borders ───────────────────────────── */
+.border-glow-gold {
+  box-shadow: inset 0 0 0 1px rgba(201,168,76,0.3), var(--glow-gold);
+}
+
+/* ─── Animations ─────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.4s cubic-bezier(0.4,0,0.2,1) both; }
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent 0%, rgba(201,168,76,0.15) 50%, transparent 100%);
+  background-size: 200% auto;
+  animation: shimmer 2.4s linear infinite;
+}
+
+@keyframes slide-in-left {
+  from { opacity: 0; transform: translateX(-16px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.animate-slide-left { animation: slide-in-left 0.35s cubic-bezier(0.4,0,0.2,1) both; }
+
 @keyframes pulse-gold {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 4px rgba(201, 168, 76, 0.4);
-  }
-  50% {
-    opacity: .6;
-    box-shadow: 0 0 12px rgba(201, 168, 76, 0.8);
-  }
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(201, 168, 76, 0.4); }
+  50%       { opacity: .7; box-shadow: 0 0 16px rgba(201, 168, 76, 0.7); }
 }
-
-.animate-pulse-gold {
-  animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
+.animate-pulse-gold { animation: pulse-gold 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
 @keyframes pulse-red {
-  0%, 100% {
-    opacity: 1;
-    box-shadow: 0 0 4px rgba(224, 82, 82, 0.4);
-  }
-  50% {
-    opacity: .6;
-    box-shadow: 0 0 12px rgba(224, 82, 82, 0.8);
-  }
+  0%, 100% { opacity: 1; box-shadow: 0 0 4px rgba(224, 82, 82, 0.4); }
+  50%       { opacity: .7; box-shadow: 0 0 16px rgba(224, 82, 82, 0.7); }
 }
+.animate-pulse-red { animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
 
-.animate-pulse-red {
-  animation: pulse-red 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
 }
+.animate-spin-slow { animation: spin-slow 3s linear infinite; }

@@ -31,16 +31,29 @@ from backend.agents.counsel import run_counsel
 # Import high-fidelity demo preset
 from backend.presets import NEXUS_OFFER_LETTER, SIMULATION_ANALYSIS_RESULT
 
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initializes local embeddings and seeds the vector store on startup."""
+    logger.info("Starting up LEXGUARD API...")
+    try:
+        init_resources()
+    except Exception as e:
+        logger.warning(f"Embedding and Chroma resources initialization deferred or failed: {e}")
+    yield  # App runs here
+
 app = FastAPI(
     title="LEXGUARD: AI Rights & Contract Intelligence System Backend",
     description="Multi-agent adversarial contract auditing REST API",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 
 # Enable CORS for frontend integration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"], # In development, allow all. In production, restrict.
+    allow_origins=["*"],  # In development, allow all. In production, restrict.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -52,15 +65,6 @@ class AnalysisRequest(BaseModel):
 
 class PresetLoadRequest(BaseModel):
     preset_name: str
-
-@app.on_event("startup")
-def startup_event():
-    """Initializes local embeddings and seeds the vector store on startup."""
-    logger.info("Starting up LEXGUARD API...")
-    try:
-        init_resources()
-    except Exception as e:
-        logger.warning(f"Embedding and Chroma resources initialization deferred or failed: {e}")
 
 @app.get("/api/health")
 def health_check():

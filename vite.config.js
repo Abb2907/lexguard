@@ -10,11 +10,11 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api/groq': {
-        target: 'https://api.groq.com/openai',
+      // Local FastAPI backend — history, analyze, etc.
+      '/api': {
+        target: 'http://localhost:8000',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/groq/, ''),
-      }
+      },
     }
   }
 })

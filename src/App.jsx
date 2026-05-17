@@ -1083,41 +1083,52 @@ for professional legal advice. Use this document strictly for advocacy preparati
       {/* ============================================================================
           TOP BAR & GLOBAL DISCLAIMER (Section 6 & 16)
           ============================================================================ */}
-      <header className="sticky top-0 z-40 flex flex-col md:flex-row items-center justify-between px-6 py-3 bg-bg-surface border-b border-border-custom shadow-md">
+      <header className="sticky top-0 z-40 flex flex-col md:flex-row items-center justify-between px-6 py-3 glass border-b border-border-custom" style={{borderBottomColor:'rgba(201,168,76,0.15)'}}>
         <div className="flex items-center gap-3">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="md:hidden p-1.5 hover:bg-bg-card border border-border-custom rounded-sm text-text-muted hover:text-accent-gold"
+            className="md:hidden p-1.5 hover:bg-bg-card border border-border-custom text-text-muted hover:text-accent-gold"
           >
             <SlidersHorizontal className="w-5 h-5" />
           </button>
-          <div className="flex items-center gap-2">
-            <Scale className="w-6 h-6 text-accent-gold" />
-            <h1 className="text-xl md:text-2xl font-display font-black text-text-primary tracking-wider select-none">
-              LEX<span className="text-accent-gold">GUARD</span>
+          <button
+            onClick={() => setAppMode('dashboard')}
+            className="flex items-center gap-2.5 hover:opacity-90 transition-opacity cursor-pointer group"
+            title="Go to Dashboard"
+          >
+            <div className="relative">
+              <Scale className="w-6 h-6 text-accent-gold" />
+              <div className="absolute inset-0 blur-md bg-accent-gold/40 -z-10 group-hover:bg-accent-gold/60 transition-colors" />
+            </div>
+            <h1 className="text-xl md:text-2xl font-display font-black tracking-wider select-none text-gradient-gold">
+              LEXGUARD
             </h1>
-          </div>
+          </button>
           <span className="hidden md:inline-block h-4 w-px bg-border-custom"></span>
-          <p className="text-[10px] md:text-xs font-mono text-accent-danger uppercase tracking-widest mt-1">
-            ⚠ Rights Protection Intelligence Platform
+          <p className="hidden md:block text-[10px] font-mono text-text-muted uppercase tracking-widest">
+            Rights Protection Intelligence
           </p>
         </div>
 
-        {/* Real-time Danger Rating Banner Indicator */}
+        {/* Right: status + API */}
         <div className="flex items-center gap-3 mt-2 md:mt-0 w-full md:w-auto justify-end">
           {dangerRating && (
-            <div className={`flex items-center gap-2 px-3 py-1 text-xs font-mono font-bold tracking-wider uppercase border ${getDangerColor(dangerRating)} animate-pulse-gold`}>
+            <div className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-bold tracking-wider uppercase border ${getDangerColor(dangerRating)} animate-pulse-gold rounded-sm`}>
               <Flame className="w-4 h-4" />
-              <span>CONTRACT STATUS: {dangerRating}</span>
+              <span>CONTRACT: {dangerRating}</span>
             </div>
           )}
           
           <button
             onClick={() => setShowApiSettings(!showApiSettings)}
-            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-bold tracking-wider uppercase border border-border-custom bg-bg-card hover:border-accent-gold hover:text-accent-gold ${isApiKeyConfigured ? 'border-emerald-500/40 text-emerald-400 hover:border-emerald-500' : ''}`}
+            className={`flex items-center gap-2 px-3 py-1.5 text-xs font-mono font-bold tracking-wider uppercase border rounded-sm ${
+              isApiKeyConfigured
+                ? 'border-emerald-500/40 bg-emerald-500/5 text-emerald-400 hover:border-emerald-500'
+                : 'border-border-custom bg-bg-card text-text-muted hover:border-accent-gold hover:text-accent-gold'
+            }`}
           >
             <Settings className="w-4 h-4" />
-            <span>{isApiKeyConfigured ? 'API KEY ACTIVE' : 'CONFIGURE API'}</span>
+            <span>{isApiKeyConfigured ? 'API ACTIVE' : 'API KEY'}</span>
           </button>
         </div>
       </header>
@@ -1137,12 +1148,16 @@ for professional legal advice. Use this document strictly for advocacy preparati
           className={`absolute md:relative inset-y-0 left-0 z-30 w-72 md:w-64 bg-bg-surface border-r border-border-custom flex flex-col transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:hidden'}`}
         >
           {/* Document Type Selector Wrapper */}
-          <div className="p-4 border-b border-border-custom flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+          <div className="p-3 flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-3">
             <button
               onClick={() => setAppMode('dashboard')}
-              className={`w-full flex items-center gap-2 p-3 text-left border text-xs font-mono font-bold uppercase tracking-wider transition-all ${appMode === 'dashboard' ? 'border-accent-gold bg-highlight text-accent-gold' : 'border-border-custom text-text-primary hover:border-accent-gold/50 hover:text-accent-gold'}`}
+              className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-xs font-mono font-bold uppercase tracking-wider rounded-sm transition-all border-l-2 ${
+                appMode === 'dashboard'
+                  ? 'border-l-accent-gold bg-highlight text-accent-gold'
+                  : 'border-l-transparent text-text-muted hover:text-text-primary hover:bg-bg-card hover:border-l-accent-gold/40'
+              }`}
             >
-              <Activity className="w-4 h-4" />
+              <Activity className="w-4 h-4 shrink-0" />
               Platform Dashboard
             </button>
             
@@ -1151,10 +1166,10 @@ for professional legal advice. Use this document strictly for advocacy preparati
                 <BookOpen className="w-3.5 h-3.5 text-accent-gold" />
                 Document Category
               </h2>
-              <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-0.5">
                 {DOCUMENT_CATEGORIES.map((category) => {
                   const Icon = category.icon;
-                  const isSelected = docType === category.id;
+                  const isSelected = docType === category.id && appMode !== 'dashboard';
                   return (
                     <button
                       key={category.id}
@@ -1162,12 +1177,16 @@ for professional legal advice. Use this document strictly for advocacy preparati
                         setDocType(category.id);
                         setAppMode('workspace');
                       }}
-                      className={`group w-full flex items-start gap-3 p-2.5 text-left border ${isSelected && appMode !== 'dashboard' ? 'border-accent-gold bg-highlight text-text-primary' : 'border-transparent text-text-muted hover:text-text-primary hover:bg-bg-card'} transition-all`}
+                      className={`group w-full flex items-start gap-3 px-3 py-2.5 text-left border-l-2 rounded-sm transition-all ${
+                        isSelected
+                          ? 'border-l-accent-gold bg-highlight text-text-primary'
+                          : 'border-l-transparent text-text-muted hover:text-text-primary hover:bg-bg-card hover:border-l-accent-gold/30'
+                      }`}
                     >
-                      <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-accent-gold' : 'text-text-muted group-hover:text-text-primary'}`} />
+                      <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${isSelected ? 'text-accent-gold' : 'text-text-muted group-hover:text-accent-gold/70'}`} />
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-mono font-bold leading-tight truncate">{category.label}</p>
-                        <p className="text-[10px] leading-snug mt-0.5 text-text-muted truncate group-hover:text-text-primary/70">{category.riskFocus}</p>
+                        <p className="text-[10px] leading-snug mt-0.5 text-text-muted truncate group-hover:text-text-primary/60">{category.riskFocus}</p>
                       </div>
                     </button>
                   );
@@ -1255,80 +1274,92 @@ for professional legal advice. Use this document strictly for advocacy preparati
             ============================================================================ */}
         <main className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 bg-bg-base">
           {appMode === 'dashboard' ? (
-            <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full py-2 gap-8 animate-fade-in">
-              {/* Hero Section */}
-              <div className="bg-bg-surface border border-border-custom p-8 relative overflow-hidden flex flex-col gap-4">
-                <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-                  <Shield className="w-48 h-48 text-accent-gold" />
+            <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full py-4 gap-6 animate-fade-in">
+
+              {/* Hero */}
+              <div className="relative overflow-hidden rounded-sm border border-border-custom bg-bg-surface bg-grid" style={{boxShadow:'0 0 80px rgba(201,168,76,0.06)'}}>
+                <div className="absolute inset-0 bg-gradient-to-br from-accent-gold/5 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute top-0 right-0 w-72 h-72 opacity-5 pointer-events-none flex items-center justify-center">
+                  <Shield className="w-64 h-64 text-accent-gold" />
                 </div>
-                <h1 className="text-4xl font-display font-bold text-text-primary tracking-tight">
-                  LEXGUARD <span className="text-accent-gold">Platform</span>
-                </h1>
-                <p className="text-sm font-mono text-text-muted max-w-2xl leading-relaxed">
-                  Enterprise-grade adversarial contract intelligence. LEXGUARD utilizes a multi-agent AI pipeline to extract exploitative clauses, detect hidden liabilities, and surface real-world legal risks before you sign anything.
-                </p>
-                <div className="flex gap-4 mt-4">
-                  <button
-                    onClick={() => setAppMode('workspace')}
-                    className="bg-accent-gold text-bg-base font-mono font-bold text-xs px-6 py-2.5 uppercase tracking-wider hover:bg-accent-gold/90 flex items-center gap-2 transition-colors"
-                  >
-                    <Sparkles className="w-4 h-4" /> Start New Audit
-                  </button>
+                <div className="relative z-10 p-8 flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 border border-accent-gold/30 bg-accent-gold/10 rounded-sm">
+                      <Scale className="w-5 h-5 text-accent-gold" />
+                    </div>
+                    <span className="text-xs font-mono text-text-muted uppercase tracking-widest">AI-Powered Contract Intelligence</span>
+                  </div>
+                  <h1 className="text-3xl md:text-4xl font-display font-black tracking-tight text-gradient-gold">
+                    LEXGUARD Platform
+                  </h1>
+                  <p className="text-sm text-text-muted max-w-2xl leading-relaxed font-body">
+                    Enterprise-grade adversarial contract intelligence. A multi-agent AI pipeline extracts exploitative clauses, detects hidden liabilities, and surfaces real-world legal risks — before you sign anything.
+                  </p>
+                  <div className="flex items-center gap-3 mt-2">
+                    <button
+                      onClick={() => setAppMode('workspace')}
+                      className="group relative flex items-center gap-2 bg-accent-gold text-bg-base font-mono font-bold text-xs px-5 py-2.5 uppercase tracking-wider hover:bg-accent-gold-light transition-colors overflow-hidden rounded-sm"
+                    >
+                      <div className="absolute inset-0 animate-shimmer opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <Sparkles className="w-4 h-4 relative z-10" />
+                      <span className="relative z-10">Start New Audit</span>
+                    </button>
+                    <span className="text-[10px] font-mono text-text-muted uppercase tracking-wider">or select a category from the sidebar →</span>
+                  </div>
                 </div>
               </div>
 
-              {/* Stats & History Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="col-span-1 flex flex-col gap-6">
-                  <div className="bg-bg-surface border border-border-custom p-6">
-                    <h3 className="text-xs font-mono text-text-muted uppercase font-bold tracking-wider mb-5 flex items-center gap-2">
-                      <Activity className="w-4 h-4 text-accent-gold" /> Platform Metrics
-                    </h3>
-                    <div className="flex flex-col gap-6">
-                      <div>
-                        <p className="text-4xl font-display font-bold text-text-primary">{history.length}</p>
-                        <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider mt-1">Total Audits</p>
-                      </div>
-                      <div>
-                        <p className="text-4xl font-display font-bold text-accent-danger">
-                           {history.filter(h => (h.overall_risk !== undefined ? h.overall_risk : 0) >= 6).length}
-                        </p>
-                        <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider mt-1">High Risk Contracts</p>
-                      </div>
+              {/* Stats + History grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {/* Stats column */}
+                <div className="col-span-1 flex flex-col gap-4">
+                  {[
+                    { label: 'Total Audits', value: history.length, color: 'text-text-primary' },
+                    { label: 'High-Risk Contracts', value: history.filter(h => (h.overall_risk ?? 0) >= 6).length, color: 'text-accent-danger' },
+                    { label: 'Safe Contracts', value: history.filter(h => (h.overall_risk ?? 11) < 4).length, color: 'text-accent-safe' },
+                  ].map((stat, i) => (
+                    <div key={i} className="bg-bg-surface border border-border-custom p-5 rounded-sm hover:border-accent-gold/30 transition-colors">
+                      <p className={`text-4xl font-display font-black ${stat.color}`}>{stat.value}</p>
+                      <p className="text-[10px] font-mono text-text-muted uppercase tracking-widest mt-2">{stat.label}</p>
                     </div>
-                  </div>
+                  ))}
                 </div>
 
-                <div className="col-span-2 bg-bg-surface border border-border-custom p-6">
-                  <h3 className="text-xs font-mono text-text-muted uppercase font-bold tracking-wider mb-5 flex items-center gap-2">
+                {/* Recent audits */}
+                <div className="col-span-2 bg-bg-surface border border-border-custom p-5 rounded-sm flex flex-col gap-4">
+                  <h3 className="text-xs font-mono text-text-muted uppercase font-bold tracking-wider flex items-center gap-2">
                     <History className="w-4 h-4 text-accent-gold" /> Recent Audits
                   </h3>
                   {history.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border-custom bg-bg-base">
-                      <FileText className="w-8 h-8 text-text-muted mb-3 opacity-50" />
-                      <p className="text-xs font-mono text-text-muted uppercase tracking-wider">No past audits found.</p>
-                      <button onClick={() => setAppMode('workspace')} className="mt-4 text-xs font-mono text-accent-gold hover:underline">Run your first audit</button>
+                    <div className="flex flex-col items-center justify-center flex-1 py-12 text-center border border-dashed border-border-custom bg-bg-base rounded-sm">
+                      <FileText className="w-8 h-8 text-text-muted mb-3 opacity-40" />
+                      <p className="text-xs font-mono text-text-muted uppercase tracking-wider">No past audits yet.</p>
+                      <button onClick={() => setAppMode('workspace')} className="mt-3 text-xs font-mono text-accent-gold hover:underline">Run your first audit</button>
                     </div>
                   ) : (
-                    <div className="flex flex-col gap-3">
-                      {history.slice(0, 5).map((item, i) => (
-                        <div key={i} className="flex items-center justify-between p-3 bg-bg-base border border-border-custom hover:border-accent-gold/30 transition-colors">
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2 rounded ${(item.overall_risk !== undefined ? item.overall_risk : 0) >= 7 ? 'bg-accent-danger/10 text-accent-danger' : (item.overall_risk !== undefined ? item.overall_risk : 0) >= 4 ? 'bg-accent-gold/10 text-accent-gold' : 'bg-highlight text-text-primary'}`}>
-                              <FileText className="w-4 h-4" />
+                    <div className="flex flex-col gap-2">
+                      {history.slice(0, 6).map((item, i) => {
+                        const risk = item.overall_risk ?? 0;
+                        const riskColor = risk >= 7 ? 'text-accent-danger' : risk >= 4 ? 'text-accent-gold' : 'text-accent-safe';
+                        const riskBg   = risk >= 7 ? 'bg-accent-danger/10 border-accent-danger/20' : risk >= 4 ? 'bg-accent-gold/10 border-accent-gold/20' : 'bg-accent-safe/10 border-accent-safe/20';
+                        return (
+                          <div key={i} className="flex items-center justify-between p-3 bg-bg-base border border-border-custom rounded-sm hover:border-accent-gold/30 transition-colors group">
+                            <div className="flex items-center gap-3">
+                              <div className={`p-2 rounded-sm border ${riskBg} ${riskColor}`}>
+                                <FileText className="w-3.5 h-3.5" />
+                              </div>
+                              <div>
+                                <span className="text-xs font-bold text-text-primary uppercase tracking-wide block">{item.doc_type || item.docType || 'Contract Audit'}</span>
+                                <span className="text-[10px] font-mono text-text-muted mt-0.5 block">{new Date(item.timestamp || item.date || Date.now()).toLocaleString()}</span>
+                              </div>
                             </div>
-                            <div className="flex flex-col">
-                              <span className="text-xs font-bold text-text-primary uppercase tracking-wide">{item.doc_type || item.docType || "Contract Audit"}</span>
-                              <span className="text-[10px] font-mono text-text-muted mt-0.5">{new Date(item.timestamp || item.date || Date.now()).toLocaleString()}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4">
-                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${(item.overall_risk !== undefined ? item.overall_risk : 0) >= 7 ? 'text-accent-danger' : 'text-accent-gold'}`}>
-                              Risk Score: {item.overall_risk !== undefined ? item.overall_risk : 'N/A'}/10
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider shrink-0 ${riskColor}`}>
+                              {item.overall_risk !== undefined ? `${item.overall_risk}/10` : 'N/A'}
                             </span>
                           </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -1426,7 +1457,7 @@ for professional legal advice. Use this document strictly for advocacy preparati
                   className="flex-1 py-3 bg-accent-gold hover:bg-accent-gold/90 text-bg-base font-display font-black tracking-wider text-sm uppercase flex items-center justify-center gap-2 shadow-lg disabled:opacity-50"
                 >
                   <Play className="w-4 h-4 fill-current" />
-                  ANALYZE CONTRACT (LIVE CLAUDE RUN)
+                  ANALYZE CONTRACT (LIVE AI ANALYSIS)
                 </button>
                 <button
                   onClick={runSimulation}

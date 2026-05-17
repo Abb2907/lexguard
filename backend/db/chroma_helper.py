@@ -118,8 +118,11 @@ def init_resources():
     try:
         if _chroma_client is None:
             import chromadb
+            import os
             logger.info("Initializing ChromaDB Embedded Client...")
-            _chroma_client = chromadb.PersistentClient(path="A:/Antigravity_projects/ascent_promptwar/backend/chroma_data")
+            # Use /tmp for Google Cloud Run read-only filesystem compatibility
+            db_path = "/tmp/chroma_data" if os.environ.get("K_SERVICE") else "chroma_data"
+            _chroma_client = chromadb.PersistentClient(path=db_path)
             _chroma_db_collection = _chroma_client.get_or_create_collection("benchmark_clauses")
             
             # Preseed ChromaDB if empty

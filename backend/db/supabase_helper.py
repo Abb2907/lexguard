@@ -7,7 +7,8 @@ from typing import List, Dict, Any, Optional
 logger = logging.getLogger("lexguard.database")
 
 # Initialize Local SQLite database as fallback
-DB_FILE = "A:/Antigravity_projects/ascent_promptwar/backend/lexguard.db"
+# Uses /tmp for Google Cloud Run compatibility (read-only filesystem)
+DB_FILE = "/tmp/lexguard.db" if os.environ.get("K_SERVICE") else "lexguard.db"
 
 def init_local_db():
     """Initializes local SQLite database for audit logs and caching if Supabase is unconfigured."""

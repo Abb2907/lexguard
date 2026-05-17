@@ -383,6 +383,16 @@ export default function App() {
   const [activeStepText, setActiveStepText] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [history, setHistory] = useState([]); // [{ name, date, docType, data }]
+  const [appMode, setAppMode] = useState('dashboard'); // 'dashboard' | 'workspace'
+
+  useEffect(() => {
+    fetch('/api/history')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setHistory(data);
+      })
+      .catch(err => console.error("Failed to fetch history:", err));
+  }, []);
   const [isDragging, setIsDragging] = useState(false);
   const [simulatedMode, setSimulatedMode] = useState(false);
   const [ocrRunning, setOcrRunning] = useState(false);
@@ -1128,8 +1138,16 @@ for professional legal advice. Use this document strictly for advocacy preparati
         >
           {/* Document Type Selector Wrapper */}
           <div className="p-4 border-b border-border-custom flex-1 overflow-y-auto custom-scrollbar flex flex-col gap-4">
+            <button
+              onClick={() => setAppMode('dashboard')}
+              className={`w-full flex items-center gap-2 p-3 text-left border text-xs font-mono font-bold uppercase tracking-wider transition-all ${appMode === 'dashboard' ? 'border-accent-gold bg-highlight text-accent-gold' : 'border-border-custom text-text-primary hover:border-accent-gold/50 hover:text-accent-gold'}`}
+            >
+              <Activity className="w-4 h-4" />
+              Platform Dashboard
+            </button>
+            
             <div>
-              <h2 className="text-xs font-mono text-text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5">
+              <h2 className="text-xs font-mono text-text-muted uppercase tracking-widest mb-3 flex items-center gap-1.5 mt-2">
                 <BookOpen className="w-3.5 h-3.5 text-accent-gold" />
                 Document Category
               </h2>
@@ -1140,8 +1158,11 @@ for professional legal advice. Use this document strictly for advocacy preparati
                   return (
                     <button
                       key={category.id}
-                      onClick={() => setDocType(category.id)}
-                      className={`group w-full flex items-start gap-3 p-2.5 text-left border ${isSelected ? 'border-accent-gold bg-highlight text-text-primary' : 'border-transparent text-text-muted hover:text-text-primary hover:bg-bg-card'} transition-all`}
+                      onClick={() => {
+                        setDocType(category.id);
+                        setAppMode('workspace');
+                      }}
+                      className={`group w-full flex items-start gap-3 p-2.5 text-left border ${isSelected && appMode !== 'dashboard' ? 'border-accent-gold bg-highlight text-text-primary' : 'border-transparent text-text-muted hover:text-text-primary hover:bg-bg-card'} transition-all`}
                     >
                       <Icon className={`w-4 h-4 mt-0.5 ${isSelected ? 'text-accent-gold' : 'text-text-muted group-hover:text-text-primary'}`} />
                       <div className="flex-1 min-w-0">
@@ -1233,9 +1254,87 @@ for professional legal advice. Use this document strictly for advocacy preparati
             CENTER MAIN — UPLOAD ZONE & PROGRESS THEATER (Section 6 & 7.2)
             ============================================================================ */}
         <main className="flex-1 flex flex-col overflow-y-auto custom-scrollbar p-6 bg-bg-base">
-          
-          {/* Main Workspace Grid: Upload Zone vs. Results Dashboard */}
-          {clauses.length === 0 ? (
+          {appMode === 'dashboard' ? (
+            <div className="flex-1 flex flex-col max-w-5xl mx-auto w-full py-2 gap-8 animate-fade-in">
+              {/* Hero Section */}
+              <div className="bg-bg-surface border border-border-custom p-8 relative overflow-hidden flex flex-col gap-4">
+                <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                  <Shield className="w-48 h-48 text-accent-gold" />
+                </div>
+                <h1 className="text-4xl font-display font-bold text-text-primary tracking-tight">
+                  LEXGUARD <span className="text-accent-gold">Platform</span>
+                </h1>
+                <p className="text-sm font-mono text-text-muted max-w-2xl leading-relaxed">
+                  Enterprise-grade adversarial contract intelligence. LEXGUARD utilizes a multi-agent AI pipeline to extract exploitative clauses, detect hidden liabilities, and surface real-world legal risks before you sign anything.
+                </p>
+                <div className="flex gap-4 mt-4">
+                  <button
+                    onClick={() => setAppMode('workspace')}
+                    className="bg-accent-gold text-bg-base font-mono font-bold text-xs px-6 py-2.5 uppercase tracking-wider hover:bg-accent-gold/90 flex items-center gap-2 transition-colors"
+                  >
+                    <Sparkles className="w-4 h-4" /> Start New Audit
+                  </button>
+                </div>
+              </div>
+
+              {/* Stats & History Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="col-span-1 flex flex-col gap-6">
+                  <div className="bg-bg-surface border border-border-custom p-6">
+                    <h3 className="text-xs font-mono text-text-muted uppercase font-bold tracking-wider mb-5 flex items-center gap-2">
+                      <Activity className="w-4 h-4 text-accent-gold" /> Platform Metrics
+                    </h3>
+                    <div className="flex flex-col gap-6">
+                      <div>
+                        <p className="text-4xl font-display font-bold text-text-primary">{history.length}</p>
+                        <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider mt-1">Total Audits</p>
+                      </div>
+                      <div>
+                        <p className="text-4xl font-display font-bold text-accent-danger">
+                           {history.filter(h => (h.overall_risk !== undefined ? h.overall_risk : 0) >= 6).length}
+                        </p>
+                        <p className="text-[10px] font-mono text-text-muted uppercase tracking-wider mt-1">High Risk Contracts</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="col-span-2 bg-bg-surface border border-border-custom p-6">
+                  <h3 className="text-xs font-mono text-text-muted uppercase font-bold tracking-wider mb-5 flex items-center gap-2">
+                    <History className="w-4 h-4 text-accent-gold" /> Recent Audits
+                  </h3>
+                  {history.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 text-center border border-dashed border-border-custom bg-bg-base">
+                      <FileText className="w-8 h-8 text-text-muted mb-3 opacity-50" />
+                      <p className="text-xs font-mono text-text-muted uppercase tracking-wider">No past audits found.</p>
+                      <button onClick={() => setAppMode('workspace')} className="mt-4 text-xs font-mono text-accent-gold hover:underline">Run your first audit</button>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col gap-3">
+                      {history.slice(0, 5).map((item, i) => (
+                        <div key={i} className="flex items-center justify-between p-3 bg-bg-base border border-border-custom hover:border-accent-gold/30 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded ${(item.overall_risk !== undefined ? item.overall_risk : 0) >= 7 ? 'bg-accent-danger/10 text-accent-danger' : (item.overall_risk !== undefined ? item.overall_risk : 0) >= 4 ? 'bg-accent-gold/10 text-accent-gold' : 'bg-highlight text-text-primary'}`}>
+                              <FileText className="w-4 h-4" />
+                            </div>
+                            <div className="flex flex-col">
+                              <span className="text-xs font-bold text-text-primary uppercase tracking-wide">{item.doc_type || item.docType || "Contract Audit"}</span>
+                              <span className="text-[10px] font-mono text-text-muted mt-0.5">{new Date(item.timestamp || item.date || Date.now()).toLocaleString()}</span>
+                            </div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider ${(item.overall_risk !== undefined ? item.overall_risk : 0) >= 7 ? 'text-accent-danger' : 'text-accent-gold'}`}>
+                              Risk Score: {item.overall_risk !== undefined ? item.overall_risk : 'N/A'}/10
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          ) : clauses.length === 0 ? (
             // IDLE SCREEN: Document Input Zone
             <div className="flex-1 flex flex-col items-center justify-center max-w-3xl mx-auto w-full py-6">
               

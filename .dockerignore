@@ -1,0 +1,9 @@
+node_modules/
+venv/
+.git/
+.env
+dist/
+__pycache__/
+*.pyc
+.pytest_cache/
+lexguard.db
